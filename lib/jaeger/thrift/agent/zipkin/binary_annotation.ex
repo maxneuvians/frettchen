@@ -1,4 +1,4 @@
-defmodule(Thrift.Generated.BinaryAnnotation) do
+defmodule(Jaeger.Thrift.Agent.Zipkin.BinaryAnnotation) do
   _ = "Auto-generated Thrift struct zipkincore.BinaryAnnotation"
   _ = "1: string key"
   _ = "2: binary value"
@@ -12,9 +12,9 @@ defmodule(Thrift.Generated.BinaryAnnotation) do
   defmodule(BinaryProtocol) do
     @moduledoc(false)
     def(deserialize(binary)) do
-      deserialize(binary, %Thrift.Generated.BinaryAnnotation{})
+      deserialize(binary, %Jaeger.Thrift.Agent.Zipkin.BinaryAnnotation{})
     end
-    defp(deserialize(<<0, rest::binary>>, %Thrift.Generated.BinaryAnnotation{} = acc)) do
+    defp(deserialize(<<0, rest::binary>>, %Jaeger.Thrift.Agent.Zipkin.BinaryAnnotation{} = acc)) do
       {acc, rest}
     end
     defp(deserialize(<<11, 1::16-signed, string_size::32-signed, value::binary-size(string_size), rest::binary>>, acc)) do
@@ -27,7 +27,7 @@ defmodule(Thrift.Generated.BinaryAnnotation) do
       deserialize(rest, %{acc | annotation_type: value})
     end
     defp(deserialize(<<12, 4::16-signed, rest::binary>>, acc)) do
-      case(Elixir.Thrift.Generated.Endpoint.BinaryProtocol.deserialize(rest)) do
+      case(Elixir.Jaeger.Thrift.Agent.Zipkin.Endpoint.BinaryProtocol.deserialize(rest)) do
         {value, rest} ->
           deserialize(rest, %{acc | host: value})
         :error ->
@@ -40,7 +40,7 @@ defmodule(Thrift.Generated.BinaryAnnotation) do
     defp(deserialize(_, _)) do
       :error
     end
-    def(serialize(%Thrift.Generated.BinaryAnnotation{key: key, value: value, annotation_type: annotation_type, host: host})) do
+    def(serialize(%Jaeger.Thrift.Agent.Zipkin.BinaryAnnotation{key: key, value: value, annotation_type: annotation_type, host: host})) do
       [case(key) do
         nil ->
           <<>>
@@ -60,7 +60,7 @@ defmodule(Thrift.Generated.BinaryAnnotation) do
         nil ->
           <<>>
         _ ->
-          [<<12, 4::16-signed>> | Thrift.Generated.Endpoint.serialize(host)]
+          [<<12, 4::16-signed>> | Jaeger.Thrift.Agent.Zipkin.Endpoint.serialize(host)]
       end | <<0>>]
     end
   end

@@ -1,4 +1,4 @@
-defmodule(Thrift.Generated.Endpoint) do
+defmodule(Jaeger.Thrift.Agent.Zipkin.Endpoint) do
   _ = "Auto-generated Thrift struct zipkincore.Endpoint"
   _ = "1: i32 ipv4"
   _ = "2: i16 port"
@@ -12,9 +12,9 @@ defmodule(Thrift.Generated.Endpoint) do
   defmodule(BinaryProtocol) do
     @moduledoc(false)
     def(deserialize(binary)) do
-      deserialize(binary, %Thrift.Generated.Endpoint{})
+      deserialize(binary, %Jaeger.Thrift.Agent.Zipkin.Endpoint{})
     end
-    defp(deserialize(<<0, rest::binary>>, %Thrift.Generated.Endpoint{} = acc)) do
+    defp(deserialize(<<0, rest::binary>>, %Jaeger.Thrift.Agent.Zipkin.Endpoint{} = acc)) do
       {acc, rest}
     end
     defp(deserialize(<<8, 1::16-signed, value::32-signed, rest::binary>>, acc)) do
@@ -35,7 +35,7 @@ defmodule(Thrift.Generated.Endpoint) do
     defp(deserialize(_, _)) do
       :error
     end
-    def(serialize(%Thrift.Generated.Endpoint{ipv4: ipv4, port: port, service_name: service_name, ipv6: ipv6})) do
+    def(serialize(%Jaeger.Thrift.Agent.Zipkin.Endpoint{ipv4: ipv4, port: port, service_name: service_name, ipv6: ipv6})) do
       [case(ipv4) do
         nil ->
           <<>>

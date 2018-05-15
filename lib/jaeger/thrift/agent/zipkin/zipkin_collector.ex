@@ -1,4 +1,4 @@
-defmodule(Thrift.Generated.ZipkinCollector) do
+defmodule(Jaeger.Thrift.Agent.Zipkin.ZipkinCollector) do
   defmodule(SubmitZipkinBatchArgs) do
     _ = "Auto-generated Thrift struct Elixir.SubmitZipkinBatchArgs"
     _ = "1: list<zipkincore.Span> spans"
@@ -28,7 +28,7 @@ defmodule(Thrift.Generated.ZipkinCollector) do
         deserialize(rest, %{struct | spans: Enum.reverse(list)})
       end
       defp(deserialize__spans(<<rest::binary>>, [list, remaining | stack])) do
-        case(Elixir.Thrift.Generated.Span.BinaryProtocol.deserialize(rest)) do
+        case(Elixir.Jaeger.Thrift.Agent.Zipkin.Span.BinaryProtocol.deserialize(rest)) do
           {element, rest} ->
             deserialize__spans(rest, [[element | list], remaining - 1 | stack])
           :error ->
@@ -44,7 +44,7 @@ defmodule(Thrift.Generated.ZipkinCollector) do
             <<>>
           _ ->
             [<<15, 1::16-signed, 12, length(spans)::32-signed>> | for(e <- spans) do
-              Thrift.Generated.Span.serialize(e)
+              Jaeger.Thrift.Agent.Zipkin.Span.serialize(e)
             end]
         end | <<0>>]
       end
@@ -88,7 +88,7 @@ defmodule(Thrift.Generated.ZipkinCollector) do
         deserialize(rest, %{struct | success: Enum.reverse(list)})
       end
       defp(deserialize__success(<<rest::binary>>, [list, remaining | stack])) do
-        case(Elixir.Thrift.Generated.Response.BinaryProtocol.deserialize(rest)) do
+        case(Elixir.Jaeger.Thrift.Agent.Zipkin.Response.BinaryProtocol.deserialize(rest)) do
           {element, rest} ->
             deserialize__success(rest, [[element | list], remaining - 1 | stack])
           :error ->
@@ -104,7 +104,7 @@ defmodule(Thrift.Generated.ZipkinCollector) do
             <<>>
           _ ->
             [<<15, 0::16-signed, 12, length(success)::32-signed>> | for(e <- success) do
-              Thrift.Generated.Response.serialize(e)
+              Jaeger.Thrift.Agent.Zipkin.Response.serialize(e)
             end]
         end | <<0>>]
       end
@@ -150,22 +150,22 @@ defmodule(Thrift.Generated.ZipkinCollector) do
       ServerImpl.start_link(__MODULE__, port, handler_module, opts)
     end
     def(handle_thrift("submitZipkinBatch", binary_data, handler_module)) do
-      case(Elixir.Thrift.Generated.ZipkinCollector.SubmitZipkinBatchArgs.BinaryProtocol.deserialize(binary_data)) do
-        {%Thrift.Generated.ZipkinCollector.SubmitZipkinBatchArgs{spans: spans}, ""} ->
+      case(Elixir.Jaeger.Thrift.Agent.Zipkin.ZipkinCollector.SubmitZipkinBatchArgs.BinaryProtocol.deserialize(binary_data)) do
+        {%Jaeger.Thrift.Agent.Zipkin.ZipkinCollector.SubmitZipkinBatchArgs{spans: spans}, ""} ->
           try() do
             rsp = handler_module.submit_zipkin_batch(spans)
             (
-              response = %Thrift.Generated.ZipkinCollector.SubmitZipkinBatchResponse{success: rsp}
-              {:reply, Elixir.Thrift.Generated.ZipkinCollector.SubmitZipkinBatchResponse.BinaryProtocol.serialize(response)}
+              response = %Jaeger.Thrift.Agent.Zipkin.ZipkinCollector.SubmitZipkinBatchResponse{success: rsp}
+              {:reply, Elixir.Jaeger.Thrift.Agent.Zipkin.ZipkinCollector.SubmitZipkinBatchResponse.BinaryProtocol.serialize(response)}
             )
+          rescue
+            []
           catch
             kind, reason ->
               formatted_exception = Exception.format(kind, reason, System.stacktrace())
               Logger.error("Exception not defined in thrift spec was thrown: #{formatted_exception}")
               error = Thrift.TApplicationException.exception(type: :internal_error, message: "Server error: #{formatted_exception}")
               {:server_error, error}
-          rescue
-            []
           end
         {_, extra} ->
           raise(Thrift.TApplicationException, type: :protocol_error, message: "Could not decode #{inspect(extra)}")

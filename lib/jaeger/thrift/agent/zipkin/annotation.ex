@@ -1,4 +1,4 @@
-defmodule(Thrift.Generated.Annotation) do
+defmodule(Jaeger.Thrift.Agent.Zipkin.Annotation) do
   _ = "Auto-generated Thrift struct zipkincore.Annotation"
   _ = "1: i64 timestamp"
   _ = "2: string value"
@@ -11,9 +11,9 @@ defmodule(Thrift.Generated.Annotation) do
   defmodule(BinaryProtocol) do
     @moduledoc(false)
     def(deserialize(binary)) do
-      deserialize(binary, %Thrift.Generated.Annotation{})
+      deserialize(binary, %Jaeger.Thrift.Agent.Zipkin.Annotation{})
     end
-    defp(deserialize(<<0, rest::binary>>, %Thrift.Generated.Annotation{} = acc)) do
+    defp(deserialize(<<0, rest::binary>>, %Jaeger.Thrift.Agent.Zipkin.Annotation{} = acc)) do
       {acc, rest}
     end
     defp(deserialize(<<10, 1::16-signed, value::64-signed, rest::binary>>, acc)) do
@@ -23,7 +23,7 @@ defmodule(Thrift.Generated.Annotation) do
       deserialize(rest, %{acc | value: value})
     end
     defp(deserialize(<<12, 3::16-signed, rest::binary>>, acc)) do
-      case(Elixir.Thrift.Generated.Endpoint.BinaryProtocol.deserialize(rest)) do
+      case(Elixir.Jaeger.Thrift.Agent.Zipkin.Endpoint.BinaryProtocol.deserialize(rest)) do
         {value, rest} ->
           deserialize(rest, %{acc | host: value})
         :error ->
@@ -36,7 +36,7 @@ defmodule(Thrift.Generated.Annotation) do
     defp(deserialize(_, _)) do
       :error
     end
-    def(serialize(%Thrift.Generated.Annotation{timestamp: timestamp, value: value, host: host})) do
+    def(serialize(%Jaeger.Thrift.Agent.Zipkin.Annotation{timestamp: timestamp, value: value, host: host})) do
       [case(timestamp) do
         nil ->
           <<>>
@@ -51,7 +51,7 @@ defmodule(Thrift.Generated.Annotation) do
         nil ->
           <<>>
         _ ->
-          [<<12, 3::16-signed>> | Thrift.Generated.Endpoint.serialize(host)]
+          [<<12, 3::16-signed>> | Jaeger.Thrift.Agent.Zipkin.Endpoint.serialize(host)]
       end | <<0>>]
     end
   end

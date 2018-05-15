@@ -77,7 +77,7 @@ defmodule(Jaeger.Thrift.Agent) do
         deserialize(rest, %{struct | spans: Enum.reverse(list)})
       end
       defp(deserialize__spans(<<rest::binary>>, [list, remaining | stack])) do
-        case(Elixir.Thrift.Generated.Span.BinaryProtocol.deserialize(rest)) do
+        case(Elixir.Jaeger.Thrift.Agent.Zipkin.Span.BinaryProtocol.deserialize(rest)) do
           {element, rest} ->
             deserialize__spans(rest, [[element | list], remaining - 1 | stack])
           :error ->
@@ -93,7 +93,7 @@ defmodule(Jaeger.Thrift.Agent) do
             <<>>
           _ ->
             [<<15, 1::16-signed, 12, length(spans)::32-signed>> | for(e <- spans) do
-              Thrift.Generated.Span.serialize(e)
+              Jaeger.Thrift.Agent.Zipkin.Span.serialize(e)
             end]
         end | <<0>>]
       end
@@ -168,14 +168,14 @@ defmodule(Jaeger.Thrift.Agent) do
               _ = rsp
               :noreply
             )
+          rescue
+            []
           catch
             kind, reason ->
               formatted_exception = Exception.format(kind, reason, System.stacktrace())
               Logger.error("Exception not defined in thrift spec was thrown: #{formatted_exception}")
               error = Thrift.TApplicationException.exception(type: :internal_error, message: "Server error: #{formatted_exception}")
               {:server_error, error}
-          rescue
-            []
           end
         {_, extra} ->
           raise(Thrift.TApplicationException, type: :protocol_error, message: "Could not decode #{inspect(extra)}")
@@ -190,14 +190,14 @@ defmodule(Jaeger.Thrift.Agent) do
               _ = rsp
               :noreply
             )
+          rescue
+            []
           catch
             kind, reason ->
               formatted_exception = Exception.format(kind, reason, System.stacktrace())
               Logger.error("Exception not defined in thrift spec was thrown: #{formatted_exception}")
               error = Thrift.TApplicationException.exception(type: :internal_error, message: "Server error: #{formatted_exception}")
               {:server_error, error}
-          rescue
-            []
           end
         {_, extra} ->
           raise(Thrift.TApplicationException, type: :protocol_error, message: "Could not decode #{inspect(extra)}")

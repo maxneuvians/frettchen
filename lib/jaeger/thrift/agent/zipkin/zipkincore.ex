@@ -1,4 +1,4 @@
-defmodule(Thrift.Generated.Zipkincore) do
+defmodule(Jaeger.Thrift.Agent.Zipkin.Zipkincore) do
   defmacro(client_addr) do
     Macro.escape("ca")
   end

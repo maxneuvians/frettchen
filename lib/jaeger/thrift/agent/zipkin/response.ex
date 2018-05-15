@@ -1,4 +1,4 @@
-defmodule(Thrift.Generated.Response) do
+defmodule(Jaeger.Thrift.Agent.Zipkin.Response) do
   _ = "Auto-generated Thrift struct zipkincore.Response"
   _ = "1: bool ok"
   defstruct(ok: nil)
@@ -9,9 +9,9 @@ defmodule(Thrift.Generated.Response) do
   defmodule(BinaryProtocol) do
     @moduledoc(false)
     def(deserialize(binary)) do
-      deserialize(binary, %Thrift.Generated.Response{})
+      deserialize(binary, %Jaeger.Thrift.Agent.Zipkin.Response{})
     end
-    defp(deserialize(<<0, rest::binary>>, %Thrift.Generated.Response{} = acc)) do
+    defp(deserialize(<<0, rest::binary>>, %Jaeger.Thrift.Agent.Zipkin.Response{} = acc)) do
       {acc, rest}
     end
     defp(deserialize(<<2, 1::16-signed, 1, rest::binary>>, acc)) do
@@ -26,14 +26,14 @@ defmodule(Thrift.Generated.Response) do
     defp(deserialize(_, _)) do
       :error
     end
-    def(serialize(%Thrift.Generated.Response{ok: ok})) do
+    def(serialize(%Jaeger.Thrift.Agent.Zipkin.Response{ok: ok})) do
       [case(ok) do
         false ->
           <<2, 1::16-signed, 0>>
         true ->
           <<2, 1::16-signed, 1>>
         _ ->
-          raise(Thrift.InvalidValueError, "Required boolean field :ok on Thrift.Generated.Response must be true or false")
+          raise(Thrift.InvalidValueError, "Required boolean field :ok on Jaeger.Thrift.Agent.Zipkin.Response must be true or false")
       end | <<0>>]
     end
   end

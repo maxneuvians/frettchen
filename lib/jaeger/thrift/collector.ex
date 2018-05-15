@@ -158,14 +158,14 @@ defmodule(Jaeger.Thrift.Collector) do
               response = %Jaeger.Thrift.Collector.SubmitBatchesResponse{success: rsp}
               {:reply, Elixir.Jaeger.Thrift.Collector.SubmitBatchesResponse.BinaryProtocol.serialize(response)}
             )
+          rescue
+            []
           catch
             kind, reason ->
               formatted_exception = Exception.format(kind, reason, System.stacktrace())
               Logger.error("Exception not defined in thrift spec was thrown: #{formatted_exception}")
               error = Thrift.TApplicationException.exception(type: :internal_error, message: "Server error: #{formatted_exception}")
               {:server_error, error}
-          rescue
-            []
           end
         {_, extra} ->
           raise(Thrift.TApplicationException, type: :protocol_error, message: "Could not decode #{inspect(extra)}")

@@ -1,4 +1,4 @@
-defmodule(Thrift.Generated.AnnotationType) do
+defmodule(Jaeger.Thrift.Agent.Zipkin.AnnotationType) do
   @moduledoc("Auto-generated Thrift enum zipkincore.AnnotationType")
   defmacro(unquote(:bool)()) do
     0

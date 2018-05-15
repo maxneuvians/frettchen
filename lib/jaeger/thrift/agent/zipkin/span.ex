@@ -1,4 +1,4 @@
-defmodule(Thrift.Generated.Span) do
+defmodule(Jaeger.Thrift.Agent.Zipkin.Span) do
   _ = "Auto-generated Thrift struct zipkincore.Span"
   _ = "1: i64 trace_id"
   _ = "3: string name"
@@ -18,9 +18,9 @@ defmodule(Thrift.Generated.Span) do
   defmodule(BinaryProtocol) do
     @moduledoc(false)
     def(deserialize(binary)) do
-      deserialize(binary, %Thrift.Generated.Span{})
+      deserialize(binary, %Jaeger.Thrift.Agent.Zipkin.Span{})
     end
-    defp(deserialize(<<0, rest::binary>>, %Thrift.Generated.Span{} = acc)) do
+    defp(deserialize(<<0, rest::binary>>, %Jaeger.Thrift.Agent.Zipkin.Span{} = acc)) do
       {acc, rest}
     end
     defp(deserialize(<<10, 1::16-signed, value::64-signed, rest::binary>>, acc)) do
@@ -66,7 +66,7 @@ defmodule(Thrift.Generated.Span) do
       deserialize(rest, %{struct | annotations: Enum.reverse(list)})
     end
     defp(deserialize__annotations(<<rest::binary>>, [list, remaining | stack])) do
-      case(Elixir.Thrift.Generated.Annotation.BinaryProtocol.deserialize(rest)) do
+      case(Elixir.Jaeger.Thrift.Agent.Zipkin.Annotation.BinaryProtocol.deserialize(rest)) do
         {element, rest} ->
           deserialize__annotations(rest, [[element | list], remaining - 1 | stack])
         :error ->
@@ -80,7 +80,7 @@ defmodule(Thrift.Generated.Span) do
       deserialize(rest, %{struct | binary_annotations: Enum.reverse(list)})
     end
     defp(deserialize__binary_annotations(<<rest::binary>>, [list, remaining | stack])) do
-      case(Elixir.Thrift.Generated.BinaryAnnotation.BinaryProtocol.deserialize(rest)) do
+      case(Elixir.Jaeger.Thrift.Agent.Zipkin.BinaryAnnotation.BinaryProtocol.deserialize(rest)) do
         {element, rest} ->
           deserialize__binary_annotations(rest, [[element | list], remaining - 1 | stack])
         :error ->
@@ -90,7 +90,7 @@ defmodule(Thrift.Generated.Span) do
     defp(deserialize__binary_annotations(_, _)) do
       :error
     end
-    def(serialize(%Thrift.Generated.Span{trace_id: trace_id, name: name, id: id, parent_id: parent_id, annotations: annotations, binary_annotations: binary_annotations, debug: debug, timestamp: timestamp, duration: duration, trace_id_high: trace_id_high})) do
+    def(serialize(%Jaeger.Thrift.Agent.Zipkin.Span{trace_id: trace_id, name: name, id: id, parent_id: parent_id, annotations: annotations, binary_annotations: binary_annotations, debug: debug, timestamp: timestamp, duration: duration, trace_id_high: trace_id_high})) do
       [case(trace_id) do
         nil ->
           <<>>
@@ -116,14 +116,14 @@ defmodule(Thrift.Generated.Span) do
           <<>>
         _ ->
           [<<15, 6::16-signed, 12, length(annotations)::32-signed>> | for(e <- annotations) do
-            Thrift.Generated.Annotation.serialize(e)
+            Jaeger.Thrift.Agent.Zipkin.Annotation.serialize(e)
           end]
       end, case(binary_annotations) do
         nil ->
           <<>>
         _ ->
           [<<15, 8::16-signed, 12, length(binary_annotations)::32-signed>> | for(e <- binary_annotations) do
-            Thrift.Generated.BinaryAnnotation.serialize(e)
+            Jaeger.Thrift.Agent.Zipkin.BinaryAnnotation.serialize(e)
           end]
       end, case(debug) do
         nil ->
@@ -133,7 +133,7 @@ defmodule(Thrift.Generated.Span) do
         true ->
           <<2, 9::16-signed, 1>>
         _ ->
-          raise(Thrift.InvalidValueError, "Optional boolean field :debug on Thrift.Generated.Span must be true, false, or nil")
+          raise(Thrift.InvalidValueError, "Optional boolean field :debug on Jaeger.Thrift.Agent.Zipkin.Span must be true, false, or nil")
       end, case(timestamp) do
         nil ->
           <<>>
