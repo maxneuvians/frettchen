@@ -1,5 +1,5 @@
 defmodule Frettchen.Span do
-  alias Jaeger.Thrift.{Log, Span, Tag, TagType}
+  alias Jaeger.Thrift.{Log, Span, Tag}
   alias Frettchen.Trace
 
   @moduledoc """
@@ -11,6 +11,21 @@ defmodule Frettchen.Span do
   """
   def close(span = %Span{}) do
     %{span | duration: (Frettchen.Helpers.current_time() - span.start_time)}
+  end
+
+  @doc """
+  log/3 adds a tag struct with a timestamp to the logs list of
+  a span.
+  """
+  def log(span = %Span{}, key, value) when is_binary(key) do
+    tag = 
+      %{Tag.new | key: key} 
+      |> tag_merge_value(value)
+    
+    log =
+      %{Log.new | timestamp: Frettchen.Helpers.current_time(), fields: [tag]}
+
+    %{span | logs: [log | span.logs]}
   end
 
   @doc """
