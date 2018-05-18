@@ -1,4 +1,87 @@
 defmodule Frettchen.TraceTest do
   use ExUnit.Case, async: true
   doctest Frettchen.Trace
+
+  alias Frettchen.Trace
+
+  describe "start/1" do
+    test "returns a trace struct with the passed name as the service name" do
+      trace = Trace.start("foo")
+      assert trace.service_name == "foo"
+    end
+
+    test "generates a random id if non is added in the options" do
+      trace = Trace.start("foo")
+      refute trace.id == nil 
+    end
+
+    test "uses the id from options to set the trace id" do
+      trace = Trace.start("foo", [id: "bar"])
+      assert trace.id == "bar"
+    end
+
+    test "uses the configuration from options to set a different configuration" do
+      configuration = %{%Frettchen.Configuration{} | reporter: :log}
+      trace = Trace.start("foo", [configuration: configuration])
+      assert trace.configuration.reporter == :log
+    end
+
+    test "creates a process that is registered in the global name space with the id" do
+      assert Trace.get("bar") == :undefined
+      Trace.start("foo", [id: "bar"])
+      refute Trace.get("bar") == :undefined
+    end
+  end
+
+  describe "add_span/1" do
+    test "adds a span struct to a trace process based on the trace_id_low in the span" do
+      Trace.start("foo", [id: "bar"])
+      span =
+        %{Jaeger.Thrift.Span.new() | 
+          trace_id_low: "bar",
+          span_id: "foo"
+        } 
+      Trace.add_span(span)
+      trace = Trace.get("bar") 
+      assert trace.spans["foo"] == span
+    end
+  end
+
+  describe "get/1" do
+    test "returns undefined if the Trace process does not exist" do
+      assert Trace.get("foo") == :undefined
+    end
+
+    test "returns trace struct if the Trace process exist" do
+      trace = Trace.start("foo")
+      assert Trace.get(trace.id) == trace
+    end
+
+    test "retuns a trace struct from a passed span" do
+      Trace.start("foo", [id: "bar"])
+      span =
+        %{Jaeger.Thrift.Span.new() | 
+          trace_id_low: "bar",
+          span_id: "foo"
+        } 
+      refute Trace.get(span) == :undefined
+    end
+  end
+
+  describe "resolve_span/1" do
+  end
+
+  describe "spans/0" do
+    test "returns a map of spans for a passed trace" do
+      Trace.start("foo", [id: "bar"])
+      span =
+        %{Jaeger.Thrift.Span.new() | 
+          trace_id_low: "bar",
+          span_id: "foo"
+        } 
+      Trace.add_span(span)
+      trace = Trace.get("bar")
+      assert trace.spans == %{"foo" => span}
+    end
+  end
 end

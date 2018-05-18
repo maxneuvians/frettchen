@@ -35,6 +35,7 @@ defmodule Frettchen.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
+      {:gen_stage, "~> 0.13"},
       {:thrift, github: "pinterest/elixir-thrift"}
     ]
   end

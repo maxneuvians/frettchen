@@ -29,36 +29,23 @@ defmodule Frettchen.Span do
   end
 
   @doc """
-  open/1 creates a new span with a given name 
-  """
-  def open(name) do
-    %{Span.new() | 
-      operation_name: Frettchen.Helpers.format_name(name),
-      trace_id_low: Frettchen.Helpers.random_id(),
-      trace_id_high: 0,
-      span_id: Frettchen.Helpers.random_id(),
-      parent_span_id: 0,
-      flags: 1,
-      start_time: Frettchen.Helpers.current_time(),
-      logs: [],
-      tags: []
-    } 
-  end
-
-  @doc """
   open/2 creates a new span with a given name and
-  assigns the passed span as the parent_id
+  assigns the passed span as the parent_id. The span
+  is then added to the Trace process
   """
-  def open(name, span = %Span{}) do
-    %{open(name) | trace_id_low: span.trace_id_low, parent_span_id: span.span_id}
+  def open(span = %Span{}, name) do
+    %{new_span(name) | trace_id_low: span.trace_id_low, parent_span_id: span.span_id}
+    |> Trace.add_span()
   end
   
   @doc """
   open/2 creates a new span with a given name and
-  assigns the passed trace as the trace_id
+  assigns the passed trace as the trace_id. The span
+  is then added to the Trace process
   """
-  def open(name, trace = %Trace{}) do
-    %{open(name) | trace_id_low: trace.id}
+  def open(trace = %Trace{}, name) do
+    %{new_span(name) | trace_id_low: trace.id}
+    |> Trace.add_span()
   end
 
   @doc """
@@ -71,6 +58,20 @@ defmodule Frettchen.Span do
       |> tag_merge_value(value)
 
     %{span | tags: [tag | span.tags]}
+  end
+
+  defp new_span(name) do
+    %{Span.new() | 
+      operation_name: Frettchen.Helpers.format_name(name),
+      trace_id_low: 0,
+      trace_id_high: 0,
+      span_id: Frettchen.Helpers.random_id(),
+      parent_span_id: 0,
+      flags: 1,
+      start_time: Frettchen.Helpers.current_time(),
+      logs: [],
+      tags: []
+    } 
   end
 
   defp tag_merge_value(tag = %Tag{}, value) when is_binary(value) do
