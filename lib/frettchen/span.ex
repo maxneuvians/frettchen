@@ -11,6 +11,7 @@ defmodule Frettchen.Span do
   """
   def close(span = %Span{}) do
     %{span | duration: (Frettchen.Helpers.current_time() - span.start_time)}
+    |> Trace.resolve_span()
   end
 
   @doc """

@@ -38,6 +38,7 @@ defmodule Frettchen.Trace do
 
   def resolve_span(span = %Span{}) do
     GenServer.cast({:global, {:frettchen, span.trace_id_low}}, {:resolve_span, span})
+    span
   end
  
   def spans(trace = %Trace{}) do
@@ -55,6 +56,12 @@ defmodule Frettchen.Trace do
 
   def handle_cast({:add_span, span}, trace) do
     {:noreply, %{trace | spans: Map.merge(trace.spans, Map.put(%{}, span.span_id, span))}}
+  end
+
+  def handle_cast({:resolve_span, span}, trace) do
+    trace = %{trace | spans: Map.merge(trace.spans, Map.put(%{}, span.span_id, span))}
+    Frettchen.Collector.add({span.span_id, trace})  
+    {:noreply, %{trace | spans: Map.delete(trace.spans, span.span_id)}}
   end
   
 end

@@ -69,6 +69,31 @@ defmodule Frettchen.TraceTest do
   end
 
   describe "resolve_span/1" do
+    setup do
+      Trace.start("foo", [id: "bar", configuration: %{ %Frettchen.Configuration{} | reporter: :null}])
+      span =
+        %{Jaeger.Thrift.Span.new() | 
+          trace_id_low: "bar",
+          span_id: "foo"
+        } 
+      Trace.add_span(span)
+      trace = Trace.get("bar") 
+      {:ok, %{span: span, trace: trace}}
+    end
+
+    test "removes a span struct from a trace process based on the trace_id_low in the span and the span_id", %{span: span} do
+      Trace.resolve_span(span)
+      trace = Trace.get("bar") 
+      refute trace.spans["foo"] == span
+    end
+
+    test "sends a span to Frettchen.Collector for further processing", %{span: span} do
+      pid = Process.whereis(Frettchen.Collector)
+      :erlang.trace(pid, true, [:receive])
+      Trace.resolve_span(span)
+      id = span.span_id
+      assert_receive {:trace, ^pid, :receive, {:"$gen_call", _, {:notify, {^id, %Trace{}}}}} 
+    end
   end
 
   describe "spans/0" do

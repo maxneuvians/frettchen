@@ -7,7 +7,7 @@ defmodule Frettchen.SpanTest do
 
     test "close/1 closes a span and calculates the duration" do
       span =
-        Frettchen.Trace.start("foo")
+        Frettchen.Trace.start("foo", [configuration: %{ %Frettchen.Configuration{} | reporter: :null}])
         |> Frettchen.Span.open("bar")
       span = Span.close(span)
       assert span.duration > 0

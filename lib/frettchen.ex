@@ -33,25 +33,28 @@ defmodule Frettchen do
         trace_id_high: 0,
         span_id: 15549390946617352406,
         flags: 1,
-        start_time: 1526338844211000,
+        start_time: Frettchen.Helpers.current_time(),
         duration: 10000,
         parent_span_id: 0
     }
     process = Jaeger.Thrift.Process.new
-    process = %{ process | service_name: "Test", tags: [version_tag, hostname_tag]}
+    process = %{ process | service_name: "Zip", tags: [version_tag, hostname_tag]}
     batch = Jaeger.Thrift.Batch.new
     batch = %{ batch |
       process: process,
       spans: [span]
     }
-    emitBatch = Jaeger.Thrift.Agent.EmitBatchArgs.new
-    emitBatch = %{ emitBatch | batch: batch }
-    data = Jaeger.Thrift.Agent.EmitBatchArgs.serialize(emitBatch)
-      |> IO.iodata_to_binary
-    {:ok, server} = :gen_udp.open(1337)
-    message = Thrift.Protocol.Binary.serialize(:message_begin, {:oneway, 12, "emitBatch"})
-    :gen_udp.send(server, '127.0.0.1', 6832, [message | data])
-    :gen_udp.close(server)
-    
+    data = Jaeger.Thrift.Batch.serialize(batch)
+    |> IO.iodata_to_binary
+    # emitBatch = Jaeger.Thrift.Agent.EmitBatchArgs.new
+    # emitBatch = %{ emitBatch | batch: batch }
+    # data = Jaeger.Thrift.Agent.EmitBatchArgs.serialize(emitBatch)
+    # |> IO.iodata_to_binary
+# {:ok, server} = :gen_udp.open(1337)
+# message = Thrift.Protocol.Binary.serialize(:message_begin, {:oneway, 12, "emitBatch"})
+#:gen_udp.send(server, '127.0.0.1', 6832, [message | data])
+#:gen_udp.close(server)
+HTTPoison.post "http://127.0.0.1:14268/api/traces?format=jaeger.thrift", data, [{"Content-Type", "application/x-thrift"}]    
+
   end
 end

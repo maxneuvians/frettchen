@@ -36,6 +36,7 @@ defmodule Frettchen.Mixfile do
   defp deps do
     [
       {:gen_stage, "~> 0.13"},
+      {:httpoison, "~> 1.0"},
       {:thrift, github: "pinterest/elixir-thrift"}
     ]
   end

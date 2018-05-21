@@ -10,7 +10,9 @@ defmodule Frettchen.Application do
 
     children = [
       worker(Frettchen.Collector, []),
-      worker(Frettchen.Reporter.Logging, [])
+      worker(Frettchen.Reporter.Logging, []),
+      worker(Frettchen.Reporter.Null, []),
+      worker(Frettchen.Reporter.Remote, [])
     ]
 
     opts = [strategy: :one_for_one, name: Frettchen.Supervisor]
