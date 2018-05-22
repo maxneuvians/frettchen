@@ -35,8 +35,10 @@ defmodule Frettchen.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
+      {:credo, "~> 0.9.1", only: [:dev, :test], runtime: false},
       {:gen_stage, "~> 0.13"},
       {:httpoison, "~> 1.0"},
+      {:socket, "~> 0.3", only: [:test]},
       {:thrift, github: "pinterest/elixir-thrift"}
     ]
   end
