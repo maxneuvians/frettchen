@@ -13,10 +13,7 @@ defmodule Frettchen.Helpers do
     true
   """
   def current_time do
-    {p1, p2, p3} = :os.timestamp()
-    "#{p1}#{p2}#{p3}"
-    |> Integer.parse
-    |> elem(0)
+    :os.system_time(:microsecond)
   end
 
   @doc """
