@@ -23,7 +23,7 @@ defmodule Frettchen.Reporter.RemoteTest do
 
   describe "hande_events/3" do
     test "sends spans received from Frettchen.Collector", %{pid: pid} do
-      trace = Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | agent_port: 32_409}])
+      trace = Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | agent_port: 33_409}])
       span = Frettchen.Span.open(trace, "bar")
       :erlang.trace(pid, true, [:receive])
       span = Frettchen.Span.close(span)
@@ -32,14 +32,14 @@ defmodule Frettchen.Reporter.RemoteTest do
     end
 
     test "sends spans received from Frettchen.Collector to a udp port"  do
+      udp_server = Process.whereis(Frettchen.TestUdpServer) 
+      :erlang.trace(udp_server, true, [:receive])
       trace = Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | agent_port: 32_409}])
       Frettchen.Span.open(trace, "bar")
         |> Frettchen.Span.close()
-
-      udp_server = Process.whereis(Frettchen.TestUdpServer) 
-      :erlang.trace(udp_server, true, [:receive])
-      assert_receive {:trace, ^udp_server, :receive, {:inet_async, _, _, _}} 
+      assert_receive({:trace, ^udp_server, :receive, {:inet_async, _, _, _}})
     end
+
     
     test "sends spans received from Frettchen.Collector to a tcp port"  do
       trace = Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | collector_port: 32_509, target: :collector}])
