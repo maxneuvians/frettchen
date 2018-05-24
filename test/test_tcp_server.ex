@@ -1,4 +1,4 @@
-defmodule Frettchen.TestUdpServer do
+defmodule Frettchen.TestTcpServer do
   use GenServer
 
   def start_link() do
@@ -7,7 +7,7 @@ defmodule Frettchen.TestUdpServer do
 
   @impl true
   def init(_state) do
-    server = Socket.UDP.open!(32_409)
+    server = Socket.TCP.listen!(32_509, packet: :line)
     start_listening()
     {:ok, server}
   end
@@ -19,7 +19,8 @@ defmodule Frettchen.TestUdpServer do
 
   @impl true
   def handle_info(:start_listening, server) do
-    server |> Socket.Datagram.recv!
+    server 
+      |> Socket.accept!
     Process.send(self(), :data_recieved, [])
     {:noreply, server}
   end 

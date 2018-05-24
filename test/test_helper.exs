@@ -1,3 +1,5 @@
 ExUnit.start(capture_log: true)
 Code.load_file("test/test_udp_server.ex")
+Code.load_file("test/test_tcp_server.ex")
 Frettchen.TestUdpServer.start_link()
+Frettchen.TestTcpServer.start_link()

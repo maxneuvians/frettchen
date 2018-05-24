@@ -54,7 +54,7 @@ defmodule Frettchen.Reporter.Sender do
   end
 
   defp send(data, :agent, configuration = %Configuration{}) do
-    {:ok, server} = :gen_udp.open(configuration.local_udp_port)
+    {:ok, server} = :gen_udp.open(0)
     message = Thrift.Protocol.Binary.serialize(
       :message_begin, 
       {
