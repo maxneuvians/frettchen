@@ -11,7 +11,13 @@ defmodule Frettchen.Mixfile do
      compilers: [:thrift | Mix.compilers],
      thrift: [
        files: Path.wildcard("thrift/**/*.thrift")
-     ]
+     ],
+     name: "Frettchen",
+     source_url: "https://github.com/maxneuvians/frettchen",
+     homepage_url: "https://github.com/maxneuvians/frettchen",
+     docs: [main: "Frettchen.Trace",
+            extras: ["README.md"]
+          ]
    ]
   end
 
@@ -36,6 +42,7 @@ defmodule Frettchen.Mixfile do
   defp deps do
     [
       {:credo, "~> 0.9.1", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:gen_stage, "~> 0.13"},
       {:httpoison, "~> 1.0"},
       {:socket, "~> 0.3", only: [:test]},
