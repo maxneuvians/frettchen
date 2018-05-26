@@ -21,24 +21,11 @@ defmodule Frettchen.Mixfile do
    ]
   end
 
-  # Configuration for the OTP application
-  #
-  # Type "mix help compile.app" for more information
   def application do
-    # Specify extra applications you'll use from Erlang/Elixir
     [extra_applications: [:logger],
      mod: {Frettchen.Application, []}]
   end
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:my_dep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:my_dep, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options
   defp deps do
     [
       {:credo, "~> 0.9.1", only: [:dev, :test], runtime: false},
@@ -48,5 +35,20 @@ defmodule Frettchen.Mixfile do
       {:socket, "~> 0.3", only: [:test]},
       {:thrift, github: "pinterest/elixir-thrift"}
     ]
+  end
+
+  defp description do
+    """
+    Frettchen is a Jaeger client written completely in Elixir. 
+    """
+  end
+
+  defp package do
+    [# These are the default files included in the package
+     files: ["lib", "thrift", "mix.exs", "README*", "LICENSE*"],
+     maintainers: ["Max Neuvians"],
+     licenses: ["MIT"],
+     links: %{"GitHub" => "https://github.com/maxneuvians/frettchen",
+              "Docs" => "https://github.com/maxneuvians/frettchen"}]
   end
 end
