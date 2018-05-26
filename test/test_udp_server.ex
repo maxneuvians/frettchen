@@ -1,4 +1,9 @@
 defmodule Frettchen.TestUdpServer do
+  @moduledoc """
+  A test UDP server for receiving UDP packages
+  sent to the Agent. The corresponding tests
+  check if the process recieved a UDP call.
+  """
   use GenServer
 
   def start_link() do

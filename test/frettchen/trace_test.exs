@@ -70,7 +70,7 @@ defmodule Frettchen.TraceTest do
 
   describe "resolve_span/1" do
     setup do
-      Trace.start("foo", [id: "bar", configuration: %{ %Frettchen.Configuration{} | reporter: :null}])
+      Trace.start("foo", [id: "bar", configuration: %{%Frettchen.Configuration{} | reporter: :null}])
       span =
         %{Jaeger.Thrift.Span.new() | 
           trace_id_low: "bar",

@@ -23,7 +23,7 @@ defmodule Frettchen.Reporter.NullTest do
 
   describe "hande_events/3" do
     test "does nothing with spans received from Frettchen.Collector", %{pid: pid} do
-      trace = Trace.start("foo", [configuration: %{ %Frettchen.Configuration{} | reporter: :null}])
+      trace = Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | reporter: :null}])
       span = Frettchen.Span.open(trace, "bar")
       :erlang.trace(pid, true, [:receive])
       span = Frettchen.Span.close(span)

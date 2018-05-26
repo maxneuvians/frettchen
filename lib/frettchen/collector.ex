@@ -1,4 +1,10 @@
 defmodule Frettchen.Collector do
+  @moduledoc """
+  The collector is a producer using a partition dispatcher
+  to send the Spans to their configured Reporters. When
+  a span is recieved it immediatly dispatched to the 
+  appropriate Reporter.
+  """
   use GenStage
 
   @doc """

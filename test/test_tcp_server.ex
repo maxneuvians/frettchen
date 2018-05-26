@@ -1,4 +1,10 @@
 defmodule Frettchen.TestTcpServer do
+  @moduledoc """
+  A test TCP server to receive the payload
+  send by the Sender to the Collector. The 
+  correpsonding tests check if this process
+  has called a recieving data action.
+  """
   use GenServer
 
   def start_link() do

@@ -1,4 +1,12 @@
 defmodule Frettchen.Reporter.Sender do
+  @moduledoc """
+  The Sender module takes a span and its 
+  associated Trace configuration from a
+  remote reporter and sends it either to 
+  a UDP port in case the Trace is configured
+  for an Agent, or a TCP port in case the 
+  Trace is configured for a collector.
+  """
   alias Frettchen.{Configuration, Trace}
   alias Jaeger.Thrift.{Agent, Batch, Process, Span, Tag}
 
@@ -11,7 +19,7 @@ defmodule Frettchen.Reporter.Sender do
     end)
   end
 
-  defp prepare_batch(span = %Span{}, trace = %Trace{}) do
+  defp prepare_batch(%Span{} = span, %Trace{} = trace) do
     process = %{
       Process.new() |
       service_name: trace.service_name,
@@ -25,7 +33,7 @@ defmodule Frettchen.Reporter.Sender do
     }
   end
 
-  defp prepare_payload(span = %Span{}, trace = %Trace{}, :agent) do
+  defp prepare_payload(%Span{} = span, %Trace{} = trace, :agent) do
     emit_batch = %{
       Agent.EmitBatchArgs.new() |
       batch: prepare_batch(span, trace)
@@ -36,7 +44,7 @@ defmodule Frettchen.Reporter.Sender do
     |> IO.iodata_to_binary()
   end
 
-  defp prepare_payload(span = %Span{}, trace = %Trace{}, :collector) do
+  defp prepare_payload(%Span{} = span, %Trace{} = trace, :collector) do
     span
     |> prepare_batch(trace)
     |> Batch.serialize() 
@@ -53,8 +61,9 @@ defmodule Frettchen.Reporter.Sender do
     [version_tag]
   end
 
-  defp send(data, :agent, configuration = %Configuration{}) do
+  defp send(data, :agent, %Configuration{} = configuration) do
     {:ok, server} = :gen_udp.open(0)
+    agent_host = String.to_charlist(configuration.agent_host)
     message = Thrift.Protocol.Binary.serialize(
       :message_begin, 
       {
@@ -65,7 +74,7 @@ defmodule Frettchen.Reporter.Sender do
     )
     :gen_udp.send(
       server, 
-      String.to_charlist(configuration.agent_host),
+      agent_host,
       configuration.agent_port,
       [message | data]
     )
@@ -73,7 +82,7 @@ defmodule Frettchen.Reporter.Sender do
     {:ok, :sent}
   end
 
-  defp send(data, :collector, configuration = %Configuration{}) do
+  defp send(data, :collector, %Configuration{} = configuration) do
     options = [{"Content-Type", "application/x-thrift"}] ++ configuration.http_options
     case HTTPoison.post(
       "#{configuration.collector_host}:#{configuration.collector_port}/api/traces?format=jaeger.thrift",

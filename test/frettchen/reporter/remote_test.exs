@@ -34,17 +34,18 @@ defmodule Frettchen.Reporter.RemoteTest do
     test "sends spans received from Frettchen.Collector to a udp port"  do
       udp_server = Process.whereis(Frettchen.TestUdpServer) 
       :erlang.trace(udp_server, true, [:receive])
-      trace = Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | agent_port: 32_409}])
-      Frettchen.Span.open(trace, "bar")
+      "foo"
+        |> Trace.start([configuration: %{%Frettchen.Configuration{} | agent_port: 32_409}])
+        |> Frettchen.Span.open("bar")
         |> Frettchen.Span.close()
       assert_receive({:trace, ^udp_server, :receive, {:inet_async, _, _, _}})
     end
 
     
     test "sends spans received from Frettchen.Collector to a tcp port"  do
-      trace = Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | collector_port: 32_509, target: :collector}])
-
-      Frettchen.Span.open(trace, "bar")
+      "foo"
+        |> Trace.start([configuration: %{%Frettchen.Configuration{} | collector_port: 32_509, target: :collector}])
+        |> Frettchen.Span.open("bar")
         |> Frettchen.Span.close()
 
       tcp_server = Process.whereis(Frettchen.TestTcpServer) 

@@ -1,10 +1,18 @@
 defmodule Frettchen.Trace do 
+  @moduledoc """
+  A Trace is a process that collects spans. When a span 
+  is created it registers with the process and when it is closed
+  it removes itself from the process and gets sent
+  to the reporter that is has been configured for. A Trace can be configured 
+  to act differently based on need. This allows you to create some traces
+  that get sent to Jaeger, and other that get logged or sent to null. 
+  You can even configure the port numbers for your collectors so Traces
+  can go to different collectors.
+  """
   use GenServer
   alias Frettchen.Trace
   alias Jaeger.Thrift.Span
 
-  @moduledoc """
-  """
   defstruct configuration: nil, id: nil, service_name: nil, spans: %{}
   
   # Public API
@@ -16,7 +24,7 @@ defmodule Frettchen.Trace do
   def start(service_name, options \\ []) do
     configuration = Keyword.get(options, :configuration, %Frettchen.Configuration{})
     id = Keyword.get(options, :id, Frettchen.Helpers.random_id())
-    trace = %{ %Trace{} | configuration: configuration, id: id, service_name: service_name}
+    trace = %{%Trace{} | configuration: configuration, id: id, service_name: service_name}
     {:ok, _} = GenServer.start_link(__MODULE__, trace, name: {:global, {:frettchen, trace.id}})
     trace
   end
@@ -26,7 +34,7 @@ defmodule Frettchen.Trace do
   span. This is largely a convenience function for allowing
   spans to be processed inside a pipe.
   """
-  def add_span(span = %Span{}) do
+  def add_span(%Span{} = span) do
     GenServer.cast({:global, {:frettchen, span.trace_id_low}}, {:add_span, span})
     span
   end
@@ -35,7 +43,7 @@ defmodule Frettchen.Trace do
   Returns a trace processs based on the trace_low_id inside a span. Usefull 
   for getting a trace when a span is passed between functions.
   """
-  def get(span = %Span{}) do
+  def get(%Span{} = span) do
     get(span.trace_id_low)
   end
 
@@ -55,7 +63,7 @@ defmodule Frettchen.Trace do
   Triggers the resolution of a span. A span is sent to the collector
   for distribution and then removed from the spans map inside the trace.
   """
-  def resolve_span(span = %Span{}) do
+  def resolve_span(%Span{} = span) do
     GenServer.cast({:global, {:frettchen, span.trace_id_low}}, {:resolve_span, span})
     span
   end
@@ -63,7 +71,7 @@ defmodule Frettchen.Trace do
   @doc """
   Returns a map of all the spans inside a trace.
   """
-  def spans(trace = %Trace{}) do
+  def spans(%Trace{} = trace) do
     GenServer.call({:global, {:frettchen, trace.id}}, :spans)
   end
 

@@ -23,7 +23,7 @@ defmodule Frettchen.Reporter.LoggingTest do
 
   describe "hande_events/3" do
     test "logs span received from Frettchen.Collector", %{pid: pid} do
-      trace = Trace.start("foo", [configuration: %{ %Frettchen.Configuration{} | reporter: :logging}])
+      trace = Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | reporter: :logging}])
       span = Frettchen.Span.open(trace, "bar")
       :erlang.trace(pid, true, [:receive])
       span = Frettchen.Span.close(span)

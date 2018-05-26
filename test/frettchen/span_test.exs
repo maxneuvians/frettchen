@@ -7,12 +7,31 @@ defmodule Frettchen.SpanTest do
 
     test "close/1 closes a span and calculates the duration" do
       span =
-        Frettchen.Trace.start("foo", [configuration: %{ %Frettchen.Configuration{} | reporter: :null}])
+        Frettchen.Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | reporter: :null}])
         |> Frettchen.Span.open("bar")
       span = Span.close(span)
       assert span.duration > 0
     end
 
+  end
+
+  describe "extract a span" do
+    test "returns the id components of a serialized span" do
+      span =
+        Frettchen.Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | reporter: :null}])
+        |> Frettchen.Span.open("bar")
+      inject = "#{Base.encode16("#{span.trace_id_low}")}:#{Base.encode16("#{span.span_id}")}:#{Base.encode16("#{span.parent_span_id}")}:1"
+      assert Span.extract(inject) == %{trace_id_low: span.trace_id_low, span_id: span.span_id, parent_span_id: span.parent_span_id}
+    end
+  end
+
+  describe "inject a span" do
+    test "serializes a span so it can be sent between processes" do
+      span =
+        Frettchen.Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | reporter: :null}])
+        |> Frettchen.Span.open("bar")
+      assert Span.inject(span) == "#{Base.encode16("#{span.trace_id_low}")}:#{Base.encode16("#{span.span_id}")}:#{Base.encode16("#{span.parent_span_id}")}:1"
+    end
   end
 
   describe "opening a span" do
