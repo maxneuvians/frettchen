@@ -96,6 +96,24 @@ defmodule Frettchen.TraceTest do
     end
   end
 
+  describe "shutdown process" do
+    test "a trace shutsdown after a give timeout" do
+      trace = Trace.start("foo", [timeout: 100])
+      Process.sleep(200)
+      assert Trace.get(trace.id) == :undefined
+    end
+
+    test "closes all remaining spans" do
+      t = Trace.start("foo", [timeout: 200])
+      span = Frettchen.Span.open(t, "bar")
+      pid = Process.whereis(Frettchen.Collector)
+      :erlang.trace(pid, true, [:receive])
+      id = span.span_id
+      Process.sleep(200) 
+      assert_receive {:trace, ^pid, :receive, {:"$gen_call", _, {:notify, {^id, %Trace{}}}}} 
+    end
+  end
+
   describe "spans/0" do
     test "returns a map of spans for a passed trace" do
       Trace.start("foo", [id: "bar"])
