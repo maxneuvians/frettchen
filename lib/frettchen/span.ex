@@ -47,7 +47,7 @@ defmodule Frettchen.Span do
   Converts the data in a span into an injectable string
   """
   def inject(%Span{} = span) do
-      "#{Integer.to_string(span.trace_id_low, 16)}:#{Integer.to_string(span.span_id, 16)}:#{Integer.to_string(span.parent_span_id,16)}:1"
+    "#{Integer.to_string(span.trace_id_low, 16)}:#{Integer.to_string(span.span_id, 16)}:#{Integer.to_string(span.parent_span_id,16)}:1"
   end
 
   @doc """
@@ -82,6 +82,26 @@ defmodule Frettchen.Span do
   """
   def open(%Trace{} = trace, name) do
     %{new_span(name) | trace_id_low: trace.id}
+    |> Trace.add_span()
+  end
+
+  @doc """
+  open/2 creates a new span with a given name and
+  assigns the passed trace as the trace_id. The span
+  is then added to the Trace process
+  """
+  def open(%Trace{} = trace, name) do
+    %{new_span(name) | trace_id_low: trace.id}
+    |> Trace.add_span()
+  end
+
+  @doc """
+  open/3 creates a new span with a given name and
+  assigns the passed trace as the trace_id as well 
+  as a parent_span_id. The span is then added to the Trace process
+  """
+  def open(%Trace{} = trace, name, parent_span_id) do
+    %{new_span(name) | trace_id_low: trace.id, parent_span_id: parent_span_id}
     |> Trace.add_span()
   end
 

@@ -69,6 +69,16 @@ defmodule Frettchen.SpanTest do
       trace = Trace.get(span)
       assert trace.spans[span.span_id] == span
     end
+
+    test "open/3 registers a span with its parent's span id" do
+      parent = 
+        Frettchen.Trace.start("foo")
+        |> Frettchen.Span.open("bar")
+      trace = Trace.get(parent)
+      span = Span.open(trace, "bar", parent.span_id)
+      trace = Trace.get(span)
+      assert trace.spans[span.span_id] == span
+    end
   end
 
   describe "add a log to a span" do
