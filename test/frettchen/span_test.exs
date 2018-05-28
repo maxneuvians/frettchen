@@ -20,7 +20,7 @@ defmodule Frettchen.SpanTest do
       span =
         Frettchen.Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | reporter: :null}])
         |> Frettchen.Span.open("bar")
-      inject = "#{Base.encode16("#{span.trace_id_low}")}:#{Base.encode16("#{span.span_id}")}:#{Base.encode16("#{span.parent_span_id}")}:1"
+      inject = "#{Integer.to_string(span.trace_id_low, 16)}:#{Integer.to_string(span.span_id, 16)}:#{Integer.to_string(span.parent_span_id,16)}:1"
       assert Span.extract(inject) == %{trace_id_low: span.trace_id_low, span_id: span.span_id, parent_span_id: span.parent_span_id}
     end
   end
@@ -30,7 +30,7 @@ defmodule Frettchen.SpanTest do
       span =
         Frettchen.Trace.start("foo", [configuration: %{%Frettchen.Configuration{} | reporter: :null}])
         |> Frettchen.Span.open("bar")
-      assert Span.inject(span) == "#{Base.encode16("#{span.trace_id_low}")}:#{Base.encode16("#{span.span_id}")}:#{Base.encode16("#{span.parent_span_id}")}:1"
+      assert Span.inject(span) == "#{Integer.to_string(span.trace_id_low, 16)}:#{Integer.to_string(span.span_id, 16)}:#{Integer.to_string(span.parent_span_id,16)}:1"
     end
   end
 

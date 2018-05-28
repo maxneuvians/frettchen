@@ -28,20 +28,17 @@ defmodule Frettchen.Span do
     trace_id_low = 
       trace_id_low
       |> String.upcase()
-      |> Base.decode16!
-      |> Integer.parse
+      |> Integer.parse(16)
       |> elem(0)
     span_id = 
       span_id
       |> String.upcase()
-      |> Base.decode16!
-      |> Integer.parse
+      |> Integer.parse(16)
       |> elem(0)
     parent_span_id = 
       parent_span_id
       |> String.upcase()
-      |> Base.decode16!
-      |> Integer.parse
+      |> Integer.parse(16)
       |> elem(0)
     %{trace_id_low: trace_id_low, span_id: span_id, parent_span_id: parent_span_id}
   end
@@ -50,7 +47,7 @@ defmodule Frettchen.Span do
   Converts the data in a span into an injectable string
   """
   def inject(%Span{} = span) do
-    "#{Base.encode16("#{span.trace_id_low}")}:#{Base.encode16("#{span.span_id}")}:#{Base.encode16("#{span.parent_span_id}")}:1"
+      "#{Integer.to_string(span.trace_id_low, 16)}:#{Integer.to_string(span.span_id, 16)}:#{Integer.to_string(span.parent_span_id,16)}:1"
   end
 
   @doc """
