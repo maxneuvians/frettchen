@@ -27,16 +27,19 @@ defmodule Frettchen.Span do
     [trace_id_low, span_id, parent_span_id, _bits] = String.split(string, ":")
     trace_id_low = 
       trace_id_low
+      |> String.upcase()
       |> Base.decode16!
       |> Integer.parse
       |> elem(0)
     span_id = 
       span_id
+      |> String.upcase()
       |> Base.decode16!
       |> Integer.parse
       |> elem(0)
     parent_span_id = 
       parent_span_id
+      |> String.upcase()
       |> Base.decode16!
       |> Integer.parse
       |> elem(0)
